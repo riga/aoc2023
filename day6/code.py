@@ -15,7 +15,7 @@ this_dir: str = os.path.dirname(os.path.abspath(__file__))
 @dataclass
 class Game:
     duration: int
-    distance: float
+    distance: int
 
 
 def main() -> None:
@@ -25,10 +25,10 @@ def main() -> None:
 
     # parse the games
     games: list[Game] = [
-        Game(duration, distance)
+        Game(int(duration), int(distance))
         for duration, distance in zip(
-            list(map(int, lines[0].split(":", 1)[1].strip().split())),
-            list(map(int, lines[1].split(":", 1)[1].strip().split())),
+            lines[0].split(":", 1)[1].strip().split(),
+            lines[1].split(":", 1)[1].strip().split(),
         )
     ]
 
