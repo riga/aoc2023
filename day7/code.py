@@ -6,29 +6,11 @@ import os
 from dataclasses import dataclass
 from functools import cmp_to_key
 from collections import Counter
+from enum import IntEnum
 
 
 this_dir: str = os.path.dirname(os.path.abspath(__file__))
 
-
-# special scores
-NOTHING: int = 0
-ONE_PAIR: int = 1
-TWO_PAIR: int = 2
-THREE: int = 3
-FULL_HOUSE: int = 4
-FOUR: int = 5
-FIVE: int = 6
-
-# decomposition into number of distinct cards and max count of any card
-score_map: dict[tuple[int, int], int] = {
-    (1, 5): FIVE,
-    (2, 4): FOUR,
-    (2, 3): FULL_HOUSE,
-    (3, 3): THREE,
-    (3, 2): TWO_PAIR,
-    (4, 2): ONE_PAIR,
-}
 
 # card scores for part 1
 card_values1: dict[str, int] = {
@@ -43,6 +25,31 @@ card_values2: dict[str, int] = {
 }
 
 
+# special scores
+class Score(IntEnum):
+    NOTHING = 0
+    ONE_PAIR = 1
+    TWO_PAIR = 2
+    THREE = 3
+    FULL_HOUSE = 4
+    FOUR = 5
+    FIVE = 6
+
+    # decomposition into number of distinct cards and max count of any card
+    __decomp__: dict[tuple[int, int], int] = {
+        (1, 5): FIVE,
+        (2, 4): FOUR,
+        (2, 3): FULL_HOUSE,
+        (3, 3): THREE,
+        (3, 2): TWO_PAIR,
+        (4, 2): ONE_PAIR,
+    }
+
+    @classmethod
+    def get(cls, n_distinct: int, max_count: int) -> Score:
+        return cls.__decomp__.get((n_distinct, max_count), cls.NOTHING)
+
+
 @dataclass
 class Hand:
     cards: str
@@ -50,9 +57,7 @@ class Hand:
 
     @property
     def score(self) -> int:
-        n_distinct = len(set(self.cards))
-        max_count = max(Counter(self.cards).values())
-        return score_map.get((n_distinct, max_count), NOTHING)
+        return Score.get(len(set(self.cards)), max(Counter(self.cards).values()))
 
     def cast_joker(self) -> Hand:
         # helper to create a hand with jokers replaced by one other card
@@ -68,25 +73,25 @@ class Hand:
             return Hand(self.cards, self.bid)
         elif n_jokers == 1:
             # if there was a four before, create a five
-            if self.score == FOUR:
+            if self.score == Score.FOUR:
                 return cast(sorted_others[0])
             # if there was a two pair before, create a full house
-            if self.score == TWO_PAIR:
+            if self.score == Score.TWO_PAIR:
                 return cast(sorted_others[0])
             # if there was a three before, create a four
-            if self.score == THREE:
+            if self.score == Score.THREE:
                 return cast(repeating_others[0])
             # if there was a pair before, create a three
-            if self.score == ONE_PAIR:
+            if self.score == Score.ONE_PAIR:
                 return cast(repeating_others[0])
             # just create a pair
             return cast(sorted_others[0])
         elif n_jokers == 2:
             # if there was a full house before, we can create a five
-            if self.score == FULL_HOUSE:
+            if self.score == Score.FULL_HOUSE:
                 return cast(sorted_others[0])
             # if there was a two pair before, we can create a four
-            if self.score == TWO_PAIR:
+            if self.score == Score.TWO_PAIR:
                 return cast(repeating_others[0])
             # there was a pair before (the jokers), we can create a three
             return cast(sorted_others[0])
@@ -135,10 +140,8 @@ def main() -> None:
     # part 1
     #
 
-    # sort hands
-    hands1: list[Hand] = sorted(hands, key=make_compare(lambda hand: hand.score, card_values1))
-
     # sort and compute total winnings
+    hands1: list[Hand] = sorted(hands, key=make_compare(lambda hand: hand.score, card_values1))
     total_winnings1: int = sum(rank * hand.bid for rank, hand in enumerate(hands1, 1))
 
     # results
@@ -148,10 +151,8 @@ def main() -> None:
     # part 2
     #
 
-    # sort hands
-    hands2: list[Hand] = sorted(hands, key=make_compare(lambda hand: hand.cast_joker().score, card_values2))
-
     # sort and compute total winnings
+    hands2: list[Hand] = sorted(hands, key=make_compare(lambda hand: hand.cast_joker().score, card_values2))
     total_winnings2: int = sum(rank * hand.bid for rank, hand in enumerate(hands2, 1))
 
     # results
