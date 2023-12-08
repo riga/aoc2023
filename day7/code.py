@@ -36,7 +36,7 @@ class Score(IntEnum):
     FIVE = 6
 
     # decomposition into number of distinct cards and max count of any card
-    __decomp__: dict[tuple[int, int], int] = {
+    __decomp__: dict[tuple[int, int], Score] = {
         (1, 5): FIVE,
         (2, 4): FOUR,
         (2, 3): FULL_HOUSE,
