@@ -28,6 +28,7 @@ def main() -> None:
 
     # parse instructions
     instructions = lines[0].strip().upper()
+    assert set(instructions) == {"L", "R"}
     n_instructions = len(instructions)
 
     # parse map nodes
