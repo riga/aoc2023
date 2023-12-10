@@ -12,7 +12,7 @@ this_dir: str = os.path.dirname(os.path.abspath(__file__))
 
 
 @dataclass
-class Point:
+class LoopPoint:
     # coordinates
     x: int
     y: int
@@ -21,10 +21,10 @@ class Point:
     v: str
 
     # neighbors
-    t: Point | None = None
-    r: Point | None = None
-    b: Point | None = None
-    l: Point | None = None
+    t: LoopPoint | None = None
+    r: LoopPoint | None = None
+    b: LoopPoint | None = None
+    l: LoopPoint | None = None
 
     def __hash__(self) -> int:
         return hash(self.coord)
@@ -37,7 +37,7 @@ class Point:
         return (self.x, self.y)
 
     @property
-    def neighbors(self) -> dict[str, Point]:
+    def neighbors(self) -> dict[str, LoopPoint]:
         return dict([(d, n) for d in "trbl" if (n := getattr(self, d))])
 
 
@@ -47,11 +47,11 @@ def main() -> None:
         lines: list[str] = [line for line in (line.strip() for line in f.readlines()) if line]
 
     # parse points that make up the maze, remember the start
-    maze: dict[tuple[int, int], Point] = {}
-    start: Point = None
+    maze: dict[tuple[int, int], LoopPoint] = {}
+    start: LoopPoint | None = None
     for y, line in enumerate(lines):
         for x, v in enumerate(line):
-            maze[(x, y)] = Point(x, y, v)
+            maze[(x, y)] = LoopPoint(x, y, v)
             if v == "S":
                 start = maze[(x, y)]
 
@@ -75,8 +75,8 @@ def main() -> None:
     #
 
     # find points on the loop
-    loop: set[Point] = set()
-    cur: Point = start
+    loop: set[LoopPoint] = set()
+    cur: LoopPoint = start
     while True:
         loop.add(cur)
         if not (next_d := [d for d, n in cur.neighbors.items() if n not in loop]):
@@ -104,9 +104,9 @@ def main() -> None:
     n_inside: int = 0
     for y in range(y_min, y_max + 1):
         n_crossings: int = 0
-        loop_start: Point | None = None
+        loop_start: LoopPoint | None = None
         for x in range(x_min, x_max + 1):
-            p: Point = maze.get((x, y))
+            p: LoopPoint = maze.get((x, y))
             if p in loop:
                 if loop_start is None:
                     if p.v in ("F", "L"):
