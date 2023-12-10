@@ -55,17 +55,15 @@ def main() -> None:
             if v == "S":
                 start = maze[(x, y)]
 
-    # fill neighbors
+    # connect neighbors, checking right or bottom
     prod = functools.cache(lambda *args: set(itertools.product(*args)))
     for point in maze.values():
-        if (p := maze.get((point.x, point.y - 1))) and (point.v, p.v) in prod("S|JL", "S|7F"):
-            point.t = p
         if (p := maze.get((point.x, point.y + 1))) and (point.v, p.v) in prod("S|7F", "S|JL"):
             point.b = p
-        if (p := maze.get((point.x - 1, point.y))) and (point.v, p.v) in prod("S-J7", "S-LF"):
-            point.l = p
+            p.t = point
         if (p := maze.get((point.x + 1, point.y))) and (point.v, p.v) in prod("S-LF", "S-J7"):
             point.r = p
+            p.l = point
 
     # replace the correct starting field
     start.v = {"tl": "J", "tb": "|", "bl": "7", "rl": "-", "rb": "F"}["".join(start.neighbors)]
