@@ -48,7 +48,7 @@ def main() -> None:
 
     # parse points that make up the maze, remember the start
     maze: dict[tuple[int, int], LoopPoint] = {}
-    start: LoopPoint | None = None
+    start: LoopPoint
     for y, line in enumerate(lines):
         for x, v in enumerate(line):
             maze[(x, y)] = LoopPoint(x, y, v)
