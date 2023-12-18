@@ -47,7 +47,7 @@ def main(*, part: int) -> None:
         ))
         n_edge_points += inst.n
 
-    # the corners form a polygon, so use shoelacing to get the area
+    # the corners form a polygon, so use shoelacing to get the area (c.f. day 10)
     # (instead of multiplying with 0.5, integer division is ok since the area will be an integer)
     n_corners = len(corners)
     area: int = abs(sum(
@@ -55,7 +55,7 @@ def main(*, part: int) -> None:
         for i in range(n_corners)
     )) // 2
 
-    # include the edge, assuming that the area calculation already takes have of it into account
+    # include the edge, assuming that the area calculation already takes half of it into account
     # (again, the number of edge points is always even by construction, so integer division is ok)
     n_inside: int = area + n_edge_points // 2 + 1
 
