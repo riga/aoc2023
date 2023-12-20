@@ -1,7 +1,7 @@
 # coding: utf-8
 
 """
-Day 20, solved with full over-engineered OOP and event queues :)
+Day 20, solved with fulll over-engineered OOP and event queues :)
 """
 
 from __future__ import annotations
@@ -28,12 +28,11 @@ class Counter:
         self.n_high = 0
         self.n_low = 0
 
-    def add(self, state: bool) -> Counter:
+    def add(self, state: bool) -> None:
         if state:
             self.n_high += 1
         else:
             self.n_low += 1
-        return self
 
 
 @dataclass
@@ -96,14 +95,11 @@ class FlipFlop(HasInputs, HasOutputs, HasState):
 
     def receive(self, in_name: str, signal: bool, queue: Queue, global_out_counter: Counter | None = None) -> None:
         self.in_counter.add(signal)
-
         # do nothing on HI
         if signal:
             return
-
         # flip state on LO
         self.state = not self.state
-
         # send new state to outputs
         self.emit(self.state, queue, global_out_counter)
 
