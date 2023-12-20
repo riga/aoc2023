@@ -209,9 +209,10 @@ def main() -> None:
 
     # after some testing, it's clear that pushing the button n times takes too much time, and it
     # seems that the input is connected to a conjunction (X) that is itself connected to several
-    # conjunctions (A, B, C, D) this means that for X to send LO to the output, it has to receive
+    # conjunctions (A, B, C, D); this means that for X to send LO to the output, it has to receive
     # only HI's from A - D; so just as for the tree cycles of day 8, assume that they all send HI
-    # on specific cycles and hope that the least common multiple of their lengths is the answer
+    # on specific cycles and hope that the least common multiple of their lengths is the minimum
+    # (which strictly must not be the case)
 
     # get the second-to-last conjunctions
     conjs: list[Conjunction] = [modules[name] for name in modules[list(modules["output"].inputs)[0]].inputs]
