@@ -225,8 +225,7 @@ def main() -> None:
     n: int = 0
     while len(n_pressed) < len(conjs):
         # push button
-        counter.add(False)
-        queue.append(partial(modules["broadcaster"].emit, False, queue, counter))
+        queue.append(partial(modules["broadcaster"].emit, False, queue))
         n += 1
         # run the event queue
         while queue:
