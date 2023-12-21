@@ -93,18 +93,21 @@ def main() -> None:
                     for i, c in enumerate(line)
                 ) + "\n")
 
-    # after studying the input, there seem to be two patterns (thanks editor minimap):
+    # after studying the input, there seem to be three patterns (thanks editor minimap):
     # 1. there is a diamond shaped border of plots that should even out unregular (diagonal) propagation effects
-    # 2. the first and last rows and columns are all plots, so there should be no dependence between garden patches
-    #    in the limit of infinite steps (that is, all edges are always O's), so one can treat each patch individually
-    # with these two observations, one just has to calculate how many garden patches are reachable, when they would be
-    # hit the first time, and from where
-    # with this in mind, it looks like the number of steps is chosen such that in the outermost garden patches, those
-    # that are only partially populated at the end, the propagation reaches
-    # - the center of an edge, in case the propagation started in the center of the opposite edge, or
-    # - in the enter (splitting the patch diagonally in half), in case the propagation started in a corner
-    # in addition, since the patch dimension is uneven, direct neighbor patches will oscillate out-of-sync, whereas
-    # diagonal neighbors will be in-sync (chess-board style)
+    # 2. there row and column crossing the starting point are free of stones, so neighbors patches are reached optimally
+    # 3. the first and last rows and columns are all plots, so there should be no dependence between garden patches
+    #    in the limit of infinite steps, so one can treat each patch individually, _but_ accounting for the "phase"
+    #    w.r.t. the center since the patch dimension is uneven, so direct neighbor patches will oscillate out-of-sync,
+    #    whereas diagonal neighbors will be in-sync (chess-board style)
+    # with these observations, one just has to calculate how many garden patches are reachable, when they would be hit
+    # the first time, and what the phase w.r.t. the center was
+    # also, it looks like the number of steps is chosen such that in the outermost garden patches, those that are only
+    # partially populated at the end, the propagation reaches
+    # - the center of an edge, in case the propagation started in the center of the opposite edge,
+    # - 1/4 of the patch, in case the propagation started in a corner _out-of-phase_, or
+    # - 3/4 of the patch, in case the propagation started in a corner _in-phase_
+    # confirm this
     n_steps: int = 26501365
     center: int = dim // 2
     assert start == (center, center)
